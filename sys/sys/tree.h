@@ -858,6 +858,10 @@ name##_RB_INSERT_BALANCE(struct name *head, struct type *elm)		\
 	gpar = NULL;							\
 	parent = RB_PARENT(elm, field);					\
 	if (!parent) {							\
+		/* even though the check is already done by		\
+		 * insert_finish, we need to keep this here for		\
+		 * the linux compat layer, as it calls this function	\
+		 */							\
 		return (NULL);						\
 	}								\
 	do {								\

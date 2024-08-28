@@ -123,6 +123,7 @@ rb_link_node(struct rb_node *node, struct rb_node *parent,
     struct rb_node **rb_link)
 {
 	rb_set_parent(node, parent);
+	_RB_SET_RDIFF00(node, __entry);
 	node->rb_left = node->rb_right = NULL;
 	*rb_link = node;
 }
