@@ -117,6 +117,13 @@ struct node {
 
 struct rb_root_cached root = RB_ROOT_CACHED;
 
+#ifndef RB_RANK
+#define RB_RANK(x, y)   0
+#endif
+#ifndef _RB_GET_RDIFF2
+#define _RB_GET_RDIFF2(x, y) 0ul
+#endif
+
 int j;
 
 int
@@ -126,14 +133,8 @@ tree_rank(const struct rb_root_cached *t)
 	return RB_RANK(linux_root, tree_root);
 }
 
-#ifndef RB_RANK
-#define RB_RANK(x, y)   0
-#endif
-#ifndef _RB_GET_RDIFF
-#define _RB_GET_RDIFF(x, y, z) 0
-#endif
-
-int panic_cmp(struct rb_node *one, struct rb_node *two)
+int
+panic_cmp(struct rb_node *one, struct rb_node *two)
 {
 	errx(1, "panic_cmp called");
 }
@@ -142,8 +143,8 @@ int panic_cmp(struct rb_node *one, struct rb_node *two)
 #define RB_ROOT(head)   (head)->rbh_root
 RB_GENERATE(linux_root, rb_node, __entry, panic_cmp);
 
-
-void insert(struct node *node, struct rb_root_cached *tree_root)
+static void
+insert(struct node *node, struct rb_root_cached *tree_root)
 {
 	struct rb_node **new = &tree_root->rb_root.rb_node, *parent = NULL;
 	int key = node->key;
@@ -160,34 +161,10 @@ void insert(struct node *node, struct rb_root_cached *tree_root)
 	rb_insert_color(&node->node_link, &tree_root->rb_root);
 }
 
-static void insert_cached(struct node *node, struct rb_root_cached *tree_root)
-{
-	struct rb_node **new = &tree_root->rb_root.rb_node, *parent = NULL;
-	int key = node->key;
-	int leftmost = 1;
-
-	while (*new) {
-		parent = *new;
-		if (key < rb_entry(parent, struct node, node_link)->key)
-			new = &parent->rb_left;
-		else {
-			new = &parent->rb_right;
-			leftmost = 0;
-		}
-	}
-
-	rb_link_node(&node->node_link, parent, new);
-	rb_insert_color_cached(&node->node_link, tree_root, leftmost);
-}
-
-static inline void erase(struct node *node, struct rb_root_cached *tree_root)
+static void
+erase(struct node *node, struct rb_root_cached *tree_root)
 {
 	rb_erase(&node->node_link, &tree_root->rb_root);
-}
-
-static inline void erase_cached(struct node *node, struct rb_root_cached *tree_root)
-{
-	rb_erase_cached(&node->node_link, tree_root);
 }
 
 int
@@ -273,11 +250,11 @@ print_helper(const struct rb_node *rbn, int indent)
 {
 	struct node *n = rb_entry(rbn, struct node, node_link);
 	if (n->node_link.rb_right)
-  		print_helper(n->node_link.rb_right, indent + 4);
+		print_helper(n->node_link.rb_right, indent + 4);
 	TDEBUGF("%*s key=%d :: size=%zu :: rank=%d :: rdiff=%lu",
 	    indent, "", n->key, n->size, RB_RANK(linux_root, rbn), _RB_GET_RDIFF2(rbn, __entry));
 	if (n->node_link.rb_left)
-  		print_helper(n->node_link.rb_left, indent + 4);
+		print_helper(n->node_link.rb_left, indent + 4);
 }
 
 static void
