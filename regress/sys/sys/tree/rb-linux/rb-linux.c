@@ -143,7 +143,6 @@ panic_cmp(struct rb_node *one, struct rb_node *two)
 #define RB_ROOT(head)   (head)->rbh_root
 RB_GENERATE(linux_root, rb_node, __entry, panic_cmp);
 
-
 static void
 insert(struct node *node, struct rb_root_cached *tree_root)
 {
@@ -163,36 +162,9 @@ insert(struct node *node, struct rb_root_cached *tree_root)
 }
 
 static void
-insert_cached(struct node *node, struct rb_root_cached *tree_root)
-{
-	struct rb_node **new = &tree_root->rb_root.rb_node, *parent = NULL;
-	int key = node->key;
-	int leftmost = 1;
-
-	while (*new) {
-		parent = *new;
-		if (key < rb_entry(parent, struct node, node_link)->key)
-			new = &parent->rb_left;
-		else {
-			new = &parent->rb_right;
-			leftmost = 0;
-		}
-	}
-
-	rb_link_node(&node->node_link, parent, new);
-	rb_insert_color_cached(&node->node_link, tree_root, leftmost);
-}
-
-static void
 erase(struct node *node, struct rb_root_cached *tree_root)
 {
 	rb_erase(&node->node_link, &tree_root->rb_root);
-}
-
-static inline void
-erase_cached(struct node *node, struct rb_root_cached *tree_root)
-{
-	rb_erase_cached(&node->node_link, tree_root);
 }
 
 int
