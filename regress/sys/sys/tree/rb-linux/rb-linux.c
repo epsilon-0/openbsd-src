@@ -117,6 +117,13 @@ struct node {
 
 struct rb_root_cached root = RB_ROOT_CACHED;
 
+#ifndef RB_RANK
+#define RB_RANK(x, y)   0
+#endif
+#ifndef _RB_GET_RDIFF2
+#define _RB_GET_RDIFF2(x, y) 0ul
+#endif
+
 int j;
 
 int
@@ -126,14 +133,8 @@ tree_rank(const struct rb_root_cached *t)
 	return RB_RANK(linux_root, tree_root);
 }
 
-#ifndef RB_RANK
-#define RB_RANK(x, y)   0
-#endif
-#ifndef _RB_GET_RDIFF
-#define _RB_GET_RDIFF(x, y, z) 0
-#endif
-
-int panic_cmp(struct rb_node *one, struct rb_node *two)
+int
+panic_cmp(struct rb_node *one, struct rb_node *two)
 {
 	errx(1, "panic_cmp called");
 }
@@ -143,7 +144,8 @@ int panic_cmp(struct rb_node *one, struct rb_node *two)
 RB_GENERATE(linux_root, rb_node, __entry, panic_cmp);
 
 
-void insert(struct node *node, struct rb_root_cached *tree_root)
+static void
+insert(struct node *node, struct rb_root_cached *tree_root)
 {
 	struct rb_node **new = &tree_root->rb_root.rb_node, *parent = NULL;
 	int key = node->key;
@@ -160,7 +162,8 @@ void insert(struct node *node, struct rb_root_cached *tree_root)
 	rb_insert_color(&node->node_link, &tree_root->rb_root);
 }
 
-static void insert_cached(struct node *node, struct rb_root_cached *tree_root)
+static void
+insert_cached(struct node *node, struct rb_root_cached *tree_root)
 {
 	struct rb_node **new = &tree_root->rb_root.rb_node, *parent = NULL;
 	int key = node->key;
@@ -180,12 +183,14 @@ static void insert_cached(struct node *node, struct rb_root_cached *tree_root)
 	rb_insert_color_cached(&node->node_link, tree_root, leftmost);
 }
 
-static inline void erase(struct node *node, struct rb_root_cached *tree_root)
+static void
+erase(struct node *node, struct rb_root_cached *tree_root)
 {
 	rb_erase(&node->node_link, &tree_root->rb_root);
 }
 
-static inline void erase_cached(struct node *node, struct rb_root_cached *tree_root)
+static inline void
+erase_cached(struct node *node, struct rb_root_cached *tree_root)
 {
 	rb_erase_cached(&node->node_link, tree_root);
 }
