@@ -32,3 +32,7 @@ ffsll(long long mask)
 	index = (unsigned long long)(max2 * de_bruijn) >> bitshift;
 	return de_bruijn_hash[index];
 }
+
+#ifdef __LP64__
+__strong_alias(ffsl, ffsll);
+#endif

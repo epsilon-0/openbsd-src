@@ -29,6 +29,7 @@ PROTO_NORMAL(bcopy);
 PROTO_NORMAL(bzero);
 PROTO_NORMAL(explicit_bzero);
 PROTO_PROTECTED(ffs);
+PROTO_PROTECTED(ffsl);
 PROTO_PROTECTED(ffsll);
 PROTO_DEPRECATED(index);
 PROTO_NORMAL(memccpy);
