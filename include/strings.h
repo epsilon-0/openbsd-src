@@ -74,6 +74,9 @@ int	 ffs(int);
 int	 strcasecmp(const char *, const char *);
 int	 strncasecmp(const char *, const char *, size_t);
 #endif
+#if __XPG_VISIBLE >= 800
+int	 ffsll(long long);
+#endif
 #if __POSIX_VISIBLE >= 200809
 int	 strcasecmp_l(const char *, const char *, locale_t);
 int	 strncasecmp_l(const char *, const char *, size_t, locale_t);

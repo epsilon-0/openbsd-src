@@ -1,7 +1,7 @@
 #	$OpenBSD: Makefile.inc,v 1.5 2015/05/15 22:29:37 millert Exp $
 
 SRCS+=	bcopy.c memcpy.c memmove.c \
-	ffs.S \
+	ffs.S ffsll.c \
 	strlen.S \
 	bcmp.c bzero.c memchr.c memcmp.c \
 	memset.c strcat.c strchr.c \

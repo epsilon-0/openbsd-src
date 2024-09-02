@@ -2,39 +2,29 @@
 
 /*
  * Public domain.
- * Written by Dale Rahn.
+ * Written by Aisha Tammy <aisha@openbsd.org>.
  */
 
-#include <string.h>
+#include <strings.h>
 
-/*
- * ffs -- vax ffs instruction
- */
+static const unsigned int de_bruijn = 0x04653ADFu;
+static const unsigned int bitshift = 32 - 5;
+static const int de_bruijn_hash[32] = {
+	 1,  2,  3,  7,  4, 12,  8, 17,
+	 5, 15, 13, 22,  9, 24, 18, 27,
+	32,  6, 11, 16, 14, 21, 23, 26,
+	31, 10, 20, 25, 30, 19, 29, 28,
+};
+
 int
 ffs(int mask)
 {
-	int bit;
-	unsigned int r = mask;
-	static const signed char t[16] = {
-		-28, 1, 2, 1,
-		  3, 1, 2, 1,
-		  4, 1, 2, 1,
-		  3, 1, 2, 1
-	};
+	unsigned int max2, ind;
 
-	bit = 0;
-	if (!(r & 0xffff)) {
-		bit += 16;
-		r >>= 16;
-	}
-	if (!(r & 0xff)) {
-		bit += 8;
-		r >>= 8;
-	}
-	if (!(r & 0xf)) {
-		bit += 4;
-		r >>= 4;
-	}
+	if (mask == 0)
+		return 0;
 
-	return (bit + t[ r & 0xf ]);
+	max2 = (unsigned int)mask & -mask;
+	ind = (unsigned int)(max2 * de_bruijn) >> bitshift;
+	return de_bruijn_hash[ind];
 }

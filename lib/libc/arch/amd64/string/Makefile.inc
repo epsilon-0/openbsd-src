@@ -2,7 +2,7 @@
 
 SRCS+=	memcpy.c memmove.S \
 	strchr.S strrchr.S \
-	bcmp.S bzero.S ffs.S memchr.S \
+	bcmp.S bzero.S ffs.S ffsll.c memchr.S \
 	memset.S strcat.c strcmp.S \
 	memcmp.c strcpy.c strcspn.c strlen.S strlcat.c \
 	strlcpy.c strncat.c strncmp.c strncpy.c strpbrk.c \
