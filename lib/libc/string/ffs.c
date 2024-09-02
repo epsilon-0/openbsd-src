@@ -28,3 +28,7 @@ ffs(int mask)
 	ind = (unsigned int)(max2 * de_bruijn) >> bitshift;
 	return de_bruijn_hash[ind];
 }
+
+#ifndef __LP64__
+__strong_alias(ffsl, ffs);
+#endif
